@@ -1,8 +1,8 @@
 name: zuraffa_file_picker
 description: >-
   Typed file picking for the Zuraffa ecosystem: a pure-Dart
-  FilePickerPort (pick files, save file, pick directory) with an
-  in-memory default adapter and federated platform implementations.
+  FilePickerPort (pick, save, pick directory) with an in-memory default
+  adapter and federated platform adapters.
 version: 0.1.0
 homepage: https://zuraffa.com
 
