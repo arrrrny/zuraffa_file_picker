@@ -34,3 +34,6 @@ local.properties
 GeneratedPluginRegistrant.*
 **/Flutter/ephemeral/
 **/Flutter/Generated.xcconfig
+
+# The example app pins its lockfile (flutter plugin example contract).
+!packages/zuraffa_file_picker/example/pubspec.lock

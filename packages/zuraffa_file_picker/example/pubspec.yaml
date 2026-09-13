@@ -1,0 +1,49 @@
+name: example
+description: >-
+  The zuraffa_file_picker demonstrator: pick files, save documents and
+  pick directories through the real OS pickers or the in-memory simulator.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  get_it: ^9.2.1
+  zuraffa: ^6.2.2
+
+  # The federated plugin under test (app-facing + platform siblings).
+  zuraffa_file_picker: ^1.0.0
+  zuraffa_file_picker_platform_interface: ^1.0.0
+  zuraffa_file_picker_android: ^1.0.0
+  zuraffa_file_picker_ios: ^1.0.0
+  zuraffa_file_picker_macos: ^1.0.0
+
+# Resolve the federated siblings to this checkout (the Flutter federated
+# plugin example pattern) while the published artifacts use hosted deps.
+dependency_overrides:
+  zuraffa_file_picker:
+    path: ../
+  zuraffa_file_picker_platform_interface:
+    path: ../../zuraffa_file_picker_platform_interface
+  zuraffa_file_picker_android:
+    path: ../../zuraffa_file_picker_android
+  zuraffa_file_picker_ios:
+    path: ../../zuraffa_file_picker_ios
+  zuraffa_file_picker_macos:
+    path: ../../zuraffa_file_picker_macos
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  integration_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

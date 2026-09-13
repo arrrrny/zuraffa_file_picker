@@ -15,6 +15,12 @@ platform adapters. Built on the
 | [`packages/zuraffa_file_picker_ios`](packages/zuraffa_file_picker_ios/) | iOS implementation (UIDocumentPickerViewController) |
 | [`packages/zuraffa_file_picker_macos`](packages/zuraffa_file_picker_macos/) | macOS implementation (NSOpenPanel / NSSavePanel) |
 
+The app-facing package ships a full-featured demonstrator app —
+[`packages/zuraffa_file_picker/example`](packages/zuraffa_file_picker/example/):
+every port operation against the real OS pickers or the in-memory
+simulator, with a flow log, verbatim error banner, and executable-documentation
+widget tests. Run it with `flutter run` from that directory.
+
 Publish from each package directory (`packages/<name>`); the federated
 siblings depend on each other via hosted dependencies.
 

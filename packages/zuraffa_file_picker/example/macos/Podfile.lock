@@ -1,0 +1,22 @@
+PODS:
+  - FlutterMacOS (1.0.0)
+  - zuraffa_file_picker_macos (1.0.2):
+    - FlutterMacOS
+
+DEPENDENCIES:
+  - FlutterMacOS (from `Flutter/ephemeral`)
+  - zuraffa_file_picker_macos (from `Flutter/ephemeral/.symlinks/plugins/zuraffa_file_picker_macos/macos`)
+
+EXTERNAL SOURCES:
+  FlutterMacOS:
+    :path: Flutter/ephemeral
+  zuraffa_file_picker_macos:
+    :path: Flutter/ephemeral/.symlinks/plugins/zuraffa_file_picker_macos/macos
+
+SPEC CHECKSUMS:
+  FlutterMacOS: c232990155153907050900a2e175c7773903ba4e
+  zuraffa_file_picker_macos: 0f9a10cdce825fcc31c6810c5d021090dfdee6b5
+
+PODFILE CHECKSUM: 1e95c36afbfd1cb6423ceca4de7a8e1b256fb6ac
+
+COCOAPODS: 1.17.0
