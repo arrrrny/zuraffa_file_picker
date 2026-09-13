@@ -103,11 +103,7 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
             return
         }
 
-        let type = contentTypes(for: "custom", extensions: [staged.pathExtension])
         let picker = UIDocumentPickerViewController(forExporting: [staged], asCopy: false)
-        if !type.isEmpty {
-            picker.allowedContentTypes = type
-        }
         if let initial = args["initialDirectory"] as? String {
             picker.directoryURL = URL(fileURLWithPath: initial)
         }
@@ -173,7 +169,7 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
                     "path": url.path,
                     "name": url.lastPathComponent,
                     "size": fileSize(at: url),
-                    "mimeType": UTType(url: url)?.preferredMIMEType,
+                    "mimeType": (try? url.resourceValues(forKeys: [.contentTypeKey]).contentType)?.preferredMIMEType,
                 ]
             }
             result(payload)
@@ -203,7 +199,7 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
         case "media":
             return [.audiovisualContent, .image]
         case "custom":
-            let mapped = extensions.compactMap { UTType(filenameExtension: $0.lowercase()) }
+            let mapped = extensions.compactMap { UTType(filenameExtension: $0.lowercased()) }
             return mapped.isEmpty ? [.data] : mapped
         default:
             return [.item]

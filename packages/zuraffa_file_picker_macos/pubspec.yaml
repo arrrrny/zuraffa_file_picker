@@ -3,7 +3,7 @@ description: >-
   The macOS implementation of zuraffa_file_picker (NSOpenPanel /
   NSSavePanel): pick files, save documents and pick directories via the
   native open and save panels.
-version: 1.0.1
+version: 1.0.2
 homepage: https://zuraffa.com
 
 environment:

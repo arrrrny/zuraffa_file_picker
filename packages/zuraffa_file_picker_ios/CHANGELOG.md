@@ -17,6 +17,15 @@
 
 # Changelog
 
+## 1.0.2
+
+- Fix native compilation errors: derive the MIME type from the picked
+  file's content type (`URL.resourceValues(.contentTypeKey)` —
+  `UTType(url:)` does not exist), correct `lowercased()`, and drop the
+  redundant `allowedContentTypes` assignment (iOS export picker types are
+  fixed by the `forExporting` initializer). Compile-validated via a
+  consumer app build on iOS simulator and macOS.
+
 ## 1.0.1
 
 - Fix the in-family `zuraffa_file_picker_platform_interface` constraint to
