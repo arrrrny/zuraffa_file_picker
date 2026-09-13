@@ -29,6 +29,7 @@ for pkg in "${PACKAGES[@]}"; do
     pubspec="packages/$pkg/pubspec.yaml"
     sed -i '' -E "s/^version: .*/version: $VERSION/" "$pubspec"
     sed -i '' -E "/^( *zuraffa_file_picker: \^)/s|.*|  zuraffa_file_picker: ^$VERSION|" "$pubspec"
+    sed -i '' -E "/^( *zuraffa_file_picker_platform_interface: \^)/s|.*|  zuraffa_file_picker_platform_interface: ^$VERSION|" "$pubspec"
     echo -e "${BLUE}$pkg -> $VERSION (in-family deps ^$VERSION)${NC}"
 done
 

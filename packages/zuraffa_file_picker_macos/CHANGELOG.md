@@ -17,6 +17,12 @@
 
 # Changelog
 
+## 1.0.1
+
+- Fix the in-family `zuraffa_file_picker_platform_interface` constraint to
+  `^1.0.0` — the published 1.0.0 (`^0.1.0` admitted no released version)
+  made this package unresolvable for consumers.
+
 ## 0.1.0
 
 - Initial release: platform implementation of `zuraffa_file_picker`
