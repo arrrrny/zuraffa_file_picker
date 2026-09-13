@@ -1,27 +1,21 @@
-# zuraffa_file_picker
+# zuraffa_file_picker — monorepo
 
-A Zuraffa-native reusable package.
+Typed file picking (pick files / save file / pick directory) for the
+Zuraffa ecosystem, behind a pure-Dart `FilePickerPort` with federated
+platform adapters. Built on the
+[Zuraffa](https://pub.dev/packages/zuraffa) framework.
 
-Created with `zfa package create` (spec 025). See
-[Writing Zuraffa packages](https://github.com/arrrrny/zuraffa/blob/master/docs/writing_zuraffa_packages.md)
-for the full guide.
+## Packages
 
-## Develop
+| Package | Description |
+| --- | --- |
+| [`packages/zuraffa_file_picker`](packages/zuraffa_file_picker/) | App-facing package: `FilePickerPort`, `FilePickerService`, typed picked-file entities + use case |
+| [`packages/zuraffa_file_picker_platform_interface`](packages/zuraffa_file_picker_platform_interface/) | MethodChannel protocol + `FilePickerPort` bridge |
+| [`packages/zuraffa_file_picker_android`](packages/zuraffa_file_picker_android/) | Android implementation (Storage Access Framework) |
+| [`packages/zuraffa_file_picker_ios`](packages/zuraffa_file_picker_ios/) | iOS implementation (UIDocumentPickerViewController) |
+| [`packages/zuraffa_file_picker_macos`](packages/zuraffa_file_picker_macos/) | macOS implementation (NSOpenPanel / NSSavePanel) |
 
-```bash
-dart pub get
-zfa entity create -n Product --field id:String --field name:String
-zfa make Product datasource repository usecase di
-zfa build
-dart test
-```
+Publish from each package directory (`packages/<name>`); the federated
+siblings depend on each other via hosted dependencies.
 
-## Consume
-
-```dart
-final engine = ZuraffaEngine();
-engine.registerPackage(ZuraffaFilePickerPackageModule());
-await engine.bootstrap();
-// the app container now resolves this package's
-// datasources / repositories / usecases — no manual registration.
-```
+See [`specs/`](specs/) for the spec-driven development records.

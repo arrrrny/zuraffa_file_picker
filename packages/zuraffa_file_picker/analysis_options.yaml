@@ -1,0 +1,16 @@
+# The root package is pure Dart; the federated platform sub-packages
+# (zuraffa_file_picker_android/ios/macos, *_platform_interface) are
+# Flutter plugins analyzed by their own toolchains (flutter analyze).
+analyzer:
+  exclude:
+    - zuraffa_file_picker_platform_interface/**
+    - zuraffa_file_picker_android/**
+    - zuraffa_file_picker_ios/**
+    - zuraffa_file_picker_macos/**
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**

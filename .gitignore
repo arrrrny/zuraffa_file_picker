@@ -1,6 +1,36 @@
 .dart_tool/
-.packages
+.build/
+pubspec.lock
+*.iml
+.DS_Store
 build/
-*.zorphy.dart
-*.g.dart
+.zfa/
+.zfa.json
+worktrees/
+
+# Flutter plugin build artifacts (federated platform packages)
+packages/zuraffa_file_picker_platform_interface/.dart_tool/
+packages/zuraffa_file_picker_android/.dart_tool/
+packages/zuraffa_file_picker_android/build/
+packages/zuraffa_file_picker_ios/.dart_tool/
+packages/zuraffa_file_picker_ios/.flutter-plugins*
+packages/zuraffa_file_picker_macos/.dart_tool/
+packages/zuraffa_file_picker_macos/.flutter-plugins*
+
+# Test/coverage and mutation reports
 coverage/
+mutation-test-report/
+
+# Agent working directory
+.kimi-code/
+
+# spec-kit extension catalog cache (generated, refetches itself)
+.specify/extensions/.cache/
+
+# Flutter build artifacts
+.flutter-plugins
+.flutter-plugins-dependencies
+local.properties
+GeneratedPluginRegistrant.*
+**/Flutter/ephemeral/
+**/Flutter/Generated.xcconfig
