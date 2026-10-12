@@ -1,3 +1,8 @@
+## 1.0.1
+
+- `zuraffa` constraint raised to `^7.0.0` and `zorphy_annotation` to `^2.4.3`,
+  so the package resolves alongside zuraffa 7.x consumers. No API changes.
+
 ## 1.0.0
 
 - First published release: typed file picking for the Zuraffa ecosystem,
