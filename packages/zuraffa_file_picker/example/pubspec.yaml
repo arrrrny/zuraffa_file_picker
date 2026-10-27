@@ -16,11 +16,11 @@ dependencies:
   zuraffa: ^7.2.0
 
   # The federated plugin under test (app-facing + platform siblings).
-  zuraffa_file_picker: ^1.0.0
-  zuraffa_file_picker_platform_interface: ^1.0.0
-  zuraffa_file_picker_android: ^1.0.0
-  zuraffa_file_picker_ios: ^1.0.0
-  zuraffa_file_picker_macos: ^1.0.0
+  zuraffa_file_picker: ^7.2.0
+  zuraffa_file_picker_platform_interface: ^7.2.0
+  zuraffa_file_picker_android: ^7.2.0
+  zuraffa_file_picker_ios: ^7.2.0
+  zuraffa_file_picker_macos: ^7.2.0
 
 # Resolve the federated siblings to this checkout (the Flutter federated
 # plugin example pattern) while the published artifacts use hosted deps.
@@ -36,6 +36,7 @@ dependency_overrides:
   zuraffa_file_picker_macos:
     path: ../../zuraffa_file_picker_macos
 
+  xml: 7.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

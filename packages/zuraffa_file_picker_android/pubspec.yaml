@@ -22,8 +22,8 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  zuraffa_file_picker: ^1.0.0
-  zuraffa_file_picker_platform_interface: ^1.0.0
+  zuraffa_file_picker: ^7.2.0
+  zuraffa_file_picker_platform_interface: ^7.2.0
 
 dependency_overrides:
   zuraffa_file_picker:
