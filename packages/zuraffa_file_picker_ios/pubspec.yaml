@@ -3,7 +3,7 @@ description: >-
   The iOS implementation of zuraffa_file_picker
   (UIDocumentPickerViewController): pick files, export documents and
   pick directories via the system document picker.
-version: 1.0.2
+version: 7.2.0
 homepage: https://zuraffa.com
 
 environment:
@@ -30,6 +30,7 @@ dependency_overrides:
   zuraffa_file_picker_platform_interface:
     path: ../zuraffa_file_picker_platform_interface
 
+  xml: 7.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
