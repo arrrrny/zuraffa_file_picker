@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   get_it: ^9.2.1
-  zuraffa: ^6.2.2
+  zuraffa: ^7.2.0
 
   # The federated plugin under test (app-facing + platform siblings).
   zuraffa_file_picker: ^1.0.0
