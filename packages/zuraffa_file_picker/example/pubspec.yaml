@@ -3,7 +3,7 @@ description: >-
   The zuraffa_file_picker demonstrator: pick files, save documents and
   pick directories through the real OS pickers or the in-memory simulator.
 publish_to: 'none'
-version: 1.0.0+1
+version: 7.2.0
 
 environment:
   sdk: ^3.13.3
