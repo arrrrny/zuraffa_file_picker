@@ -3,7 +3,7 @@ description: >-
   The platform interface contract for zuraffa_file_picker: the
   MethodChannel protocol and the FilePickerPort bridge platform
   implementations conform to.
-version: 7.2.0
+version: 7.3.0
 homepage: https://zuraffa.com
 
 environment:
@@ -14,13 +14,15 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.1.8
-  zuraffa_file_picker: ^7.2.0
+  zuraffa_file_picker: ^7.3.0
 
 dependency_overrides:
   zuraffa_file_picker:
     path: ../zuraffa_file_picker
 
   xml: 7.1.0
+  zuraffa:
+    path: ../../../zuraffa
 dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:

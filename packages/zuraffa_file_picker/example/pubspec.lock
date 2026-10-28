@@ -626,46 +626,45 @@ packages:
   zuraffa:
     dependency: "direct main"
     description:
-      name: zuraffa
-      sha256: b89bb4a0646347802d4c7b1052a626b2d0b6f956891eb9db4992325e7624b695
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.2.0"
+      path: "../../../../zuraffa"
+      relative: true
+    source: path
+    version: "7.3.0"
   zuraffa_file_picker:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "7.2.0"
+    version: "7.3.0"
   zuraffa_file_picker_android:
     dependency: "direct main"
     description:
       path: "../../zuraffa_file_picker_android"
       relative: true
     source: path
-    version: "7.2.0"
+    version: "7.3.0"
   zuraffa_file_picker_ios:
     dependency: "direct main"
     description:
       path: "../../zuraffa_file_picker_ios"
       relative: true
     source: path
-    version: "7.2.0"
+    version: "7.3.0"
   zuraffa_file_picker_macos:
     dependency: "direct main"
     description:
       path: "../../zuraffa_file_picker_macos"
       relative: true
     source: path
-    version: "7.2.0"
+    version: "7.3.0"
   zuraffa_file_picker_platform_interface:
     dependency: "direct main"
     description:
       path: "../../zuraffa_file_picker_platform_interface"
       relative: true
     source: path
-    version: "7.2.0"
+    version: "7.3.0"
 sdks:
   dart: ">=3.13.3 <4.0.0"
   flutter: ">=3.18.0-18.0.pre.54"
