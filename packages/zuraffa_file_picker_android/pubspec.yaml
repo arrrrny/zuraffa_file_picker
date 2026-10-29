@@ -33,6 +33,7 @@ dependency_overrides:
 
   xml: 7.1.0
 dev_dependencies:
+  zuraffa: ^7.3.0
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
