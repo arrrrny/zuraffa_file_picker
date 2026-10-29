@@ -1,0 +1,63 @@
+name: test
+
+# Spec 1205 (issue #1): this repo has no consuming app, so CI is the bar
+# that keeps it healthy between releases — analyze + test + publish dry-run
+# for every federated member. One job per member: a failure names the
+# member in the job list (acceptance US4/US5).
+#
+# Single ubuntu lane: unlike zuraffa_intents' `defaultIsAppleLikeUriPath()`,
+# nothing in this fleet's Dart code or tests is platform-conditional (no
+# `Platform.is*` / `TargetPlatform` branches across all five members), so a
+# macOS lane would run the same assertions. Revisit if a member grows
+# host-conditional behavior.
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: zuraffa_file_picker
+            flutter: false
+          - package: zuraffa_file_picker_platform_interface
+            flutter: true
+          - package: zuraffa_file_picker_android
+            flutter: true
+          - package: zuraffa_file_picker_ios
+            flutter: true
+          - package: zuraffa_file_picker_macos
+            flutter: true
+    name: ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/${{ matrix.package }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # The app package is pure Dart (`package:test`); the federated
+      # members are Flutter plugins (`flutter_test`).
+      - name: pub get
+        run: ${{ matrix.flutter && 'flutter pub get' || 'dart pub get' }}
+
+      - name: analyze
+        run: ${{ matrix.flutter && 'flutter analyze --fatal-infos' || 'dart analyze' }}
+
+      - name: test
+        run: ${{ matrix.flutter && 'flutter test --concurrency=2' || 'dart test -j 2' }}
+
+      - name: publish dry-run
+        run: ${{ matrix.flutter && 'flutter pub publish --dry-run' || 'dart pub publish --dry-run' }}
