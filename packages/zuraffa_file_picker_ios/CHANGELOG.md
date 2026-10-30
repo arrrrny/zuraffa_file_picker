@@ -1,3 +1,12 @@
+## Unreleased
+
+- The photo-library pick source on iOS (spec 002, issue #2):
+  `PHPickerViewController` serves `media`/`image`/`video` (whole library,
+  HEIC included, no permission string), `UIDocumentPickerViewController`
+  keeps the document source with exact `allowedExtensions`. `registerWith`
+  pins `PickerHost.ios`; both invoice shapes verified over the channel in
+  `test/registration_test.dart`.
+
 ## 7.3.0 - 2026-10-28
 
 - Mono-version fleet alignment: the whole zuraffa family ships at 7.3.0 together with the core.

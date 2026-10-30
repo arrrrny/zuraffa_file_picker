@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:zuraffa_file_picker/zuraffa_file_picker.dart';
 
 import 'file_picker_platform_interface.dart';
@@ -22,8 +23,14 @@ class MethodChannelFilePickerAdapter implements FilePickerPort {
   /// [ZuraffaFilePickerPlatform.instance]).
   final ZuraffaFilePickerPlatform platform;
 
-  MethodChannelFilePickerAdapter({ZuraffaFilePickerPlatform? platform})
-    : platform = platform ?? ZuraffaFilePickerPlatform.instance;
+  /// The host this adapter serves. Defaults to the ambient
+  /// [defaultTargetPlatform]; the iOS package pins [PickerHost.ios]
+  /// explicitly so its routing is testable without the device.
+  final PickerHost host;
+
+  MethodChannelFilePickerAdapter({ZuraffaFilePickerPlatform? platform, PickerHost? host})
+    : platform = platform ?? ZuraffaFilePickerPlatform.instance,
+      host = host ?? _ambientHost();
 
   @override
   Future<FilePickResult> pickFiles(FilePickOptions options) async {
@@ -33,6 +40,13 @@ class MethodChannelFilePickerAdapter implements FilePickerPort {
         options.allowedExtensions,
       ),
       FilePickerWire.multiple: options.multiple,
+      // The resolved source travels on the wire: the native side only
+      // switches on an explicit `document` / `photoLibrary` value.
+      FilePickerWire.source: PickerSourceRouter.resolve(
+        type: options.type,
+        requested: options.source,
+        host: host,
+      ).name,
       if (options.initialDirectory != null)
         FilePickerWire.initialDirectory: options.initialDirectory,
     });
@@ -61,6 +75,20 @@ class MethodChannelFilePickerAdapter implements FilePickerPort {
         size: _toInt(descriptor[FilePickerWire.size]),
         mimeType: descriptor[FilePickerWire.mimeType]?.toString(),
       );
+
+  /// The ambient `defaultTargetPlatform` mapped onto [PickerHost].
+  static PickerHost _ambientHost() {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+        return PickerHost.ios;
+      case TargetPlatform.android:
+        return PickerHost.android;
+      case TargetPlatform.macOS:
+        return PickerHost.macos;
+      default:
+        return PickerHost.other;
+    }
+  }
 
   static int _toInt(Object? value) {
     if (value is int) return value;
