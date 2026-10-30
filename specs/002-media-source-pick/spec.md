@@ -47,7 +47,10 @@ opened the document picker: the one capability gap blocking adoption.
 - **FR-4** — Cancellation contract pinned end to end: a dismissed picker
   (document or photo source) resolves an empty `FilePickResult`
   (`isCanceled`) — never an exception — through the in-memory adapter, the
-  MethodChannel adapter and the iOS registration seam.
+  MethodChannel adapter and the iOS registration seam. "Cancellation is a
+  value" is scoped to *dismissal*: when items were picked but every copy
+  into app storage fails, the photo source resolves a `copy_failed` error
+  instead of an empty result that would read as a dismissal.
 - **FR-5** — Everything above tests platform-less: route resolution,
   wire serialization and descriptor population in pure Dart / Flutter
   tests; the iOS registration seam pins the `ios` host and the full

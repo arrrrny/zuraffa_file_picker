@@ -38,10 +38,17 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
         case document
         case photoLibrary
 
-        init?(raw: String?) {
+        init(raw: String?) {
             switch raw {
             case "photoLibrary": self = .photoLibrary
-            default: self = .document
+            case nil: self = .document // no `source` key → Dart-side default
+            default:
+                // Dart owns routing, so the fallthrough is deliberate, but
+                // an unrecognized wire value (a typo'd or renamed key) must
+                // not silently re-route picks — surface it at the native
+                // edge while the values are still development-visible.
+                NSLog("%@", "ZuraffaFilePicker: unknown source key '\(raw ?? "")' — using document.")
+                self = .document
             }
         }
     }
@@ -277,12 +284,21 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
         let group = DispatchGroup()
         for (index, item) in results.enumerated() {
             let provider = item.itemProvider
-            guard let typeIdentifier = pickableTypeIdentifier(from: provider) else { continue }
+            guard let typeIdentifier = pickableTypeIdentifier(from: provider) else {
+                // Non-fatal: the item has no loadable representation, so
+                // it is lost — log it and keep delivering the rest.
+                NSLog("%@", "ZuraffaFilePicker: picked item \(index) has no loadable type identifier; skipped.")
+                continue
+            }
             group.enter()
             provider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
                 defer { group.leave() }
                 guard let url = url, error == nil,
                       let copied = Self.copyIntoPickerTemp(url, provider: provider) else {
+                    // Non-fatal: one lost item (failed iCloud download,
+                    // tmp write error) must not lose the whole pick.
+                    NSLog("%@", "ZuraffaFilePicker: could not copy picked item \(index): "
+                        + (error?.localizedDescription ?? "no representation URL"))
                     return
                 }
                 let descriptor: [String: Any?] = [
@@ -297,7 +313,21 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
             }
         }
         group.notify(queue: .main) {
-            result(descriptors.filter { !$0.isEmpty })
+            // Dismissal and total copy failure are different states: the
+            // user demonstrably picked items here, so an empty result —
+            // which Dart reads as `isCanceled` — would lie about that.
+            // Resolution state is only cancellation-as-the-value for a
+            // *dismissed* picker; lost copies fail loudly instead.
+            let delivered = descriptors.filter { !$0.isEmpty }
+            if delivered.isEmpty {
+                result(FlutterError(
+                    code: "copy_failed",
+                    message: "The selected items could not be copied for upload.",
+                    details: nil
+                ))
+                return
+            }
+            result(delivered)
         }
     }
 
@@ -325,6 +355,21 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
             try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         } catch {
             return nil
+        }
+        // Age-gated prune (iOS empties tmp only opportunistically, so
+        // repeated picks would otherwise grow this directory every
+        // session): anything older than 24h was delivered long before,
+        // the app must have consumed it or a re-pick returns it. The
+        // freshly written copy below is never touched — its `path` is
+        // about to be handed to the Dart caller.
+        let cutoff = Date(timeIntervalSinceNow: -24 * 60 * 60)
+        let keys = URLResourceKey.contentModificationDateKey
+        let stale = (try? FileManager.default.contentsOfDirectory(
+            at: dir, includingPropertiesForKeys: [keys])) ?? []
+        for url in stale where
+            ((try? url.resourceValues(forKeys: [keys]).contentModificationDate)
+                ?? .distantPast) < cutoff {
+            try? FileManager.default.removeItem(at: url)
         }
         // Prefer the item's suggested name (e.g. `IMG_0001`) with the
         // representation's real extension, so `name` reads like the
