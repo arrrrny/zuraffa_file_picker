@@ -37,8 +37,6 @@ dependency_overrides:
     path: ../../zuraffa_file_picker_macos
 
   xml: 7.1.0
-  zuraffa:
-    path: ../../../../zuraffa
 dev_dependencies:
   flutter_test:
     sdk: flutter

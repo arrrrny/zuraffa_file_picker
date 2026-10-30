@@ -1,3 +1,11 @@
+## Unreleased
+
+- Fleet hardening (zik_zak spec 1205): new CI workflow (`.github/workflows/test.yml`) runs analyze + test + publish dry-run for every federated member on every push/PR — one job per member so a failure names it. Single ubuntu lane: nothing in the fleet's Dart code is platform-conditional.
+- Publish verification: the sibling-checkout `zuraffa` path overrides are gone from the member pubspecs (and the example app) so a fresh clone or CI resolves against the published fleet at 7.3.0; pub ignores overrides when publishing, so shipped artifacts are unchanged.
+- README parity: platform support matrix, install snippet pinned to the fleet version, and an adoption status note (healthy but unconsumed; what would justify re-adoption into zik_zak).
+- The member package CHANGELOGs now carry the 7.3.0 entry (the mono-release propagation had never landed on master), clearing the `pub publish --dry-run` validation warning on every member.
+- Registration suites for the android/ios/macos adapters so every member carries tests, and a fleet consistency test pinning mono-version/constraint/README/CI parity.
+
 ## 7.3.0 - 2026-10-28
 
 - Mono-version fleet alignment: the whole zuraffa family ships at 7.3.0 together with the core.

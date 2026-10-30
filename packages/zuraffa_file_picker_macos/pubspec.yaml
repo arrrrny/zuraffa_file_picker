@@ -31,9 +31,8 @@ dependency_overrides:
     path: ../zuraffa_file_picker_platform_interface
 
   xml: 7.1.0
-  zuraffa:
-    path: ../../../zuraffa
 dev_dependencies:
+  zuraffa: ^7.3.0
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
