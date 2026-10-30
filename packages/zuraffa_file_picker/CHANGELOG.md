@@ -1,3 +1,12 @@
+## Unreleased
+
+- Media-source pick on iOS (spec 002, issue #2): iOS `FileType.media`
+  resolves to the photo library through `PickerSourceRouter`
+  (`FilePickOptions.source` added, default `auto`); both
+  `uploadInvoice` shapes (custom+pdf, media+jpg/jpeg/png/heic), field
+  population and the cancellation contract pinned by
+  `test/media_source_test.dart`.
+
 ## 7.3.0 - 2026-10-28
 
 - Mono-version fleet alignment: the whole zuraffa family ships at 7.3.0 together with the core.

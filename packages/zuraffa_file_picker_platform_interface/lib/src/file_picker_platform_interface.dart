@@ -14,6 +14,7 @@ abstract final class FilePickerWire {
   static const allowedExtensions = 'allowedExtensions';
   static const multiple = 'multiple';
   static const initialDirectory = 'initialDirectory';
+  static const source = 'source';
   static const fileName = 'fileName';
   static const bytes = 'bytes';
 
@@ -28,9 +29,13 @@ abstract final class FilePickerWire {
 /// implements: pick files, save a file, pick a directory.
 ///
 /// The channel protocol (method → arguments → result):
-/// - `pickFiles` → `{type, allowedExtensions, multiple, initialDirectory?}` →
-///   `List<Map>` of file descriptors (`path`/`name`/`size`/`mimeType`),
-///   or `null` when the user dismissed the picker.
+/// - `pickFiles` → `{type, allowedExtensions, multiple, source,
+///   initialDirectory?}` → `List<Map>` of file descriptors
+///   (`path`/`name`/`size`/`mimeType`), or `null` when the user
+///   dismissed the picker. `source` is the **resolved** picker source
+///   (`document` / `photoLibrary`) — the Dart side owns the routing
+///   ([PickerSourceRouter]) so native sides only switch on an explicit
+///   value and default to `document` when the key is absent.
 /// - `saveFile` → `{fileName?, initialDirectory?, bytes?}` →
 ///   `String?` saved path, or `null` when dismissed.
 /// - `pickDirectory` → `String?` (initial directory) → `String?`

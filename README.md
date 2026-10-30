@@ -10,7 +10,7 @@ platform adapters. Built on the
 | Platform | Status | Implementation |
 | -------- | ------ | -------------- |
 | Android  | ✅ full | Storage Access Framework — `zuraffa_file_picker_android` |
-| iOS      | ✅ full | `UIDocumentPickerViewController` — `zuraffa_file_picker_ios` (iOS 14+) |
+| iOS      | ✅ full | `UIDocumentPickerViewController` (document source) + `PHPickerViewController` (photo-library source, `media`/`image`/`video`) — `zuraffa_file_picker_ios` (iOS 14+) |
 | macOS    | ✅ full | `NSOpenPanel` / `NSSavePanel` — `zuraffa_file_picker_macos` (macOS 11+) |
 | Anywhere | ✅ dev/tests | In-memory simulator — `InMemoryFilePickerAdapter`, the pure-Dart default until a platform adapter registers |
 
@@ -21,7 +21,7 @@ platform adapters. Built on the
 | [`packages/zuraffa_file_picker`](packages/zuraffa_file_picker/) | App-facing package: `FilePickerPort`, `FilePickerService`, typed picked-file entities + use case |
 | [`packages/zuraffa_file_picker_platform_interface`](packages/zuraffa_file_picker_platform_interface/) | MethodChannel protocol + `FilePickerPort` bridge |
 | [`packages/zuraffa_file_picker_android`](packages/zuraffa_file_picker_android/) | Android implementation (Storage Access Framework) |
-| [`packages/zuraffa_file_picker_ios`](packages/zuraffa_file_picker_ios/) | iOS implementation (UIDocumentPickerViewController) |
+| [`packages/zuraffa_file_picker_ios`](packages/zuraffa_file_picker_ios/) | iOS implementation (UIDocumentPickerViewController + PHPickerViewController photo library) |
 | [`packages/zuraffa_file_picker_macos`](packages/zuraffa_file_picker_macos/) | macOS implementation (NSOpenPanel / NSSavePanel) |
 
 ## Getting started

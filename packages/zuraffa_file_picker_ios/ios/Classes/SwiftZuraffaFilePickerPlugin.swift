@@ -1,21 +1,56 @@
 import Flutter
+import PhotosUI
 import UniformTypeIdentifiers
 
-/// The iOS file picker: UIDocumentPickerViewController behind the shared
-/// `zuraffa_file_picker` channel.
+/// The iOS file picker behind the shared `zuraffa_file_picker` channel.
 ///
-/// File picks use `asCopy: true` so every descriptor carries a real,
-/// readable filesystem path (the system copies the documents into our
-/// tmp). Save exports a staged temp file into the user-chosen location
-/// and returns its path. A dismissed picker resolves `nil` —
-/// cancellation is a value, never an exception.
-public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerDelegate {
+/// Two picker sources serve `pickFiles` (spec 002, spec 1206 FR-4/FR-5):
+///
+/// - **document** — `UIDocumentPickerViewController` ("Browse/upload from
+///   device" on iOS 16+). Honors `allowedExtensions` for `custom`.
+/// - **photoLibrary** — `PHPickerViewController`, the photo-library source
+///   `file_picker`'s `FileType.media` provides: it browses the *whole*
+///   photo library (no "Recents only" trap), needs no permission string
+///   and serves images, videos and live photos. HEIC reaches the app as
+///   the original file, so `size` is the real byte size.
+///
+/// The Dart side resolves which source runs (`PickerSourceRouter`) and
+/// sends it as the explicit `source` key; this side only switches on the
+/// value and defaults to `document` when it is absent.
+///
+/// File picks use `asCopy: true` / an explicit temp copy of every file
+/// representation so every descriptor carries a real, readable
+/// filesystem path (the system copies the documents into our tmp).
+/// Save exports a staged temp file into the user-chosen location and
+/// returns its path. A dismissed picker resolves `nil` — cancellation is
+/// a value, never an exception.
+public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerDelegate, PHPickerViewControllerDelegate {
     private static let channelName = "zuraffa_file_picker"
+    private static let pickerTempDirName = "zuraffa_file_picker"
 
     private enum PickerMode {
         case pickFiles
         case saveFile
         case pickDirectory
+    }
+
+    private enum PickerSource {
+        case document
+        case photoLibrary
+
+        init(raw: String?) {
+            switch raw {
+            case "photoLibrary": self = .photoLibrary
+            case nil: self = .document // no `source` key → Dart-side default
+            default:
+                // Dart owns routing, so the fallthrough is deliberate, but
+                // an unrecognized wire value (a typo'd or renamed key) must
+                // not silently re-route picks — surface it at the native
+                // edge while the values are still development-visible.
+                NSLog("%@", "ZuraffaFilePicker: unknown source key '\(raw ?? "")' — using document.")
+                self = .document
+            }
+        }
     }
 
     private let channel: FlutterMethodChannel
@@ -70,16 +105,56 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
         let type = args["type"] as? String ?? "any"
         let extensions = args["allowedExtensions"] as? [String] ?? []
         let multiple = args["multiple"] as? Bool ?? false
+        let source = PickerSource(raw: args["source"] as? String)
 
-        let picker = UIDocumentPickerViewController(
-            forOpeningContentTypes: contentTypes(for: type, extensions: extensions),
-            asCopy: true
-        )
-        picker.allowsMultipleSelection = multiple
-        if let initial = args["initialDirectory"] as? String {
-            picker.directoryURL = URL(fileURLWithPath: initial)
+        switch source {
+        case .photoLibrary:
+            presentPhotoLibrary(type: type, multiple: multiple, result)
+        case .document:
+            let picker = UIDocumentPickerViewController(
+                forOpeningContentTypes: contentTypes(for: type, extensions: extensions),
+                asCopy: true
+            )
+            picker.allowsMultipleSelection = multiple
+            if let initial = args["initialDirectory"] as? String {
+                picker.directoryURL = URL(fileURLWithPath: initial)
+            }
+            present(picker, result)
         }
-        present(picker, result)
+    }
+
+    /// Presents the photo-library picker (spec 002 FR-1). The caller's
+    /// `allowedExtensions` are advisory here: PHPicker filters by *kind*
+    /// and serves every image/video the library holds — HEIC included —
+    /// matching `file_picker`'s `FileType.media` semantics.
+    private func presentPhotoLibrary(type: String, multiple: Bool, _ result: @escaping FlutterResult) {
+        DispatchQueue.main.async {
+            guard let root = Self.topmostViewController() else {
+                result(FlutterError(
+                    code: "no_view_controller",
+                    message: "File picker requires a presented view hierarchy.",
+                    details: nil
+                ))
+                return
+            }
+            var configuration = PHPickerConfiguration()
+            configuration.filter = Self.photoLibraryFilter(for: type)
+            configuration.selectionLimit = multiple ? 0 : 1
+            let picker = PHPickerViewController(configuration: configuration)
+            picker.delegate = self
+            // iPad pickers require an anchor.
+            picker.popoverPresentationController?.sourceView = root.view
+            self.pendingResult = result
+            root.present(picker, animated: true)
+        }
+    }
+
+    private static func photoLibraryFilter(for type: String) -> PHPickerFilter {
+        switch type {
+        case "video": return .videos
+        case "media": return .any(of: [.images, .videos, .livePhotos])
+        default: return .images
+        }
     }
 
     // MARK: - Save file
@@ -123,7 +198,7 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
         present(picker, result)
     }
 
-    // MARK: - Presentation + delegate
+    // MARK: - Presentation + document delegate
 
     private func present(_ picker: UIDocumentPickerViewController, _ result: @escaping FlutterResult) {
         picker.delegate = self
@@ -169,7 +244,8 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
                     "path": url.path,
                     "name": url.lastPathComponent,
                     "size": fileSize(at: url),
-                    "mimeType": (try? url.resourceValues(forKeys: [.contentTypeKey]).contentType)?.preferredMIMEType,
+                    "mimeType": UTType(filenameExtension: url.pathExtension)?.preferredMIMEType
+                        ?? (try? url.resourceValues(forKeys: [.contentTypeKey]).contentType)?.preferredMIMEType,
                 ]
             }
             result(payload)
@@ -186,6 +262,131 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
         result?(nil)
     }
 
+    // MARK: - Photo-library delegate (spec 002 FR-1/FR-3)
+
+    public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        picker.dismiss(animated: true)
+        let result = pendingResult
+        pendingResult = nil
+        guard let result = result else { return }
+
+        // An empty result set is the user dismissing the picker.
+        guard !results.isEmpty else {
+            result(nil)
+            return
+        }
+
+        // Copy every picked item's file representation into our tmp — the
+        // representation URL is only valid inside this completion block —
+        // so each descriptor carries a readable path + real byte size.
+        var descriptors = [[String: Any?]](repeating: [:], count: results.count)
+        let lock = NSLock()
+        let group = DispatchGroup()
+        for (index, item) in results.enumerated() {
+            let provider = item.itemProvider
+            guard let typeIdentifier = pickableTypeIdentifier(from: provider) else {
+                // Non-fatal: the item has no loadable representation, so
+                // it is lost — log it and keep delivering the rest.
+                NSLog("%@", "ZuraffaFilePicker: picked item \(index) has no loadable type identifier; skipped.")
+                continue
+            }
+            group.enter()
+            provider.loadFileRepresentation(forTypeIdentifier: typeIdentifier) { url, error in
+                defer { group.leave() }
+                guard let url = url, error == nil,
+                      let copied = Self.copyIntoPickerTemp(url, provider: provider) else {
+                    // Non-fatal: one lost item (failed iCloud download,
+                    // tmp write error) must not lose the whole pick.
+                    NSLog("%@", "ZuraffaFilePicker: could not copy picked item \(index): "
+                        + (error?.localizedDescription ?? "no representation URL"))
+                    return
+                }
+                let descriptor: [String: Any?] = [
+                    "path": copied.path,
+                    "name": copied.lastPathComponent,
+                    "size": Self.fileSize(at: copied),
+                    "mimeType": UTType(filenameExtension: copied.pathExtension)?.preferredMIMEType,
+                ]
+                lock.lock()
+                descriptors[index] = descriptor
+                lock.unlock()
+            }
+        }
+        group.notify(queue: .main) {
+            // Dismissal and total copy failure are different states: the
+            // user demonstrably picked items here, so an empty result —
+            // which Dart reads as `isCanceled` — would lie about that.
+            // Resolution state is only cancellation-as-the-value for a
+            // *dismissed* picker; lost copies fail loudly instead.
+            let delivered = descriptors.filter { !$0.isEmpty }
+            if delivered.isEmpty {
+                result(FlutterError(
+                    code: "copy_failed",
+                    message: "The selected items could not be copied for upload.",
+                    details: nil
+                ))
+                return
+            }
+            result(delivered)
+        }
+    }
+
+    /// The type identifier to load for a picked item: prefer the item's
+    /// native image/movie representation (the original HEIC for iPhone
+    /// photos, not a transcoded copy) over a fallback like `public.jpeg`.
+    private func pickableTypeIdentifier(from provider: NSItemProvider) -> String? {
+        let identifiers = provider.registeredTypeIdentifiers
+        for identifier in identifiers {
+            guard let type = UTType(identifier) else { continue }
+            if type.conforms(to: .image) || type.conforms(to: .movie) {
+                return identifier
+            }
+        }
+        return identifiers.first
+    }
+
+    /// Copies a picked item's representation into `tmp/zuraffa_file_picker/`
+    /// under a stable, unique, app-chosen name so the descriptor is valid
+    /// long after the completion block ends.
+    private static func copyIntoPickerTemp(_ url: URL, provider: NSItemProvider) -> URL? {
+        let dir = FileManager.default.temporaryDirectory
+            .appendingPathComponent(pickerTempDirName, isDirectory: true)
+        do {
+            try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        } catch {
+            return nil
+        }
+        // Age-gated prune (iOS empties tmp only opportunistically, so
+        // repeated picks would otherwise grow this directory every
+        // session): anything older than 24h was delivered long before,
+        // the app must have consumed it or a re-pick returns it. The
+        // freshly written copy below is never touched — its `path` is
+        // about to be handed to the Dart caller.
+        let cutoff = Date(timeIntervalSinceNow: -24 * 60 * 60)
+        let keys = URLResourceKey.contentModificationDateKey
+        let stale = (try? FileManager.default.contentsOfDirectory(
+            at: dir, includingPropertiesForKeys: [keys])) ?? []
+        for url in stale where
+            ((try? url.resourceValues(forKeys: [keys]).contentModificationDate)
+                ?? .distantPast) < cutoff {
+            try? FileManager.default.removeItem(at: url)
+        }
+        // Prefer the item's suggested name (e.g. `IMG_0001`) with the
+        // representation's real extension, so `name` reads like the
+        // picker's and the extension keeps the MIME type derivable.
+        let extensionName = url.pathExtension.isEmpty ? "dat" : url.pathExtension
+        let baseName = (provider.suggestedName ?? url.deletingPathExtension().lastPathComponent)
+            .replacingOccurrences(of: "/", with: "_")
+        let fileName = "\(UUID().uuidString)_\(baseName).\(extensionName)"
+        let target = dir.appendingPathComponent(fileName)
+        do {
+            try FileManager.default.copyItem(at: url, to: target)
+        } catch {
+            return nil
+        }
+        return target
+    }
+
     // MARK: - Helpers
 
     private func contentTypes(for type: String, extensions: [String]) -> [UTType] {
@@ -197,6 +398,9 @@ public class ZuraffaFilePickerPlugin: NSObject, FlutterPlugin, UIDocumentPickerD
         case "audio":
             return [.audio]
         case "media":
+            // Only reached with an explicit `document` source; the photo
+            // library does not serve standalone audio, so the document
+            // picker's audiovisual surface remains the default.
             return [.audiovisualContent, .image]
         case "custom":
             let mapped = extensions.compactMap { UTType(filenameExtension: $0.lowercased()) }

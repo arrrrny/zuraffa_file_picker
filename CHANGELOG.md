@@ -21,6 +21,21 @@
 
 # Changelog
 
+## Unreleased
+
+- Media-source pick on iOS (spec 002, issue #2): `FileType.media` on iOS now
+  opens the photo library (`PHPickerViewController`) — the `file_picker`
+  `FileType.media` semantics zik_zak's price-check invoice flow depends on.
+- The routing lives in `PickerSourceRouter` (pure Dart, over
+  type/requested source/host) and travels to the native side as the
+  explicit `source` wire key; `FilePickOptions` gains a `PickerSource`
+  field (`auto` default) to pin a source explicitly.
+- Extension-filter parity: document source honors `allowedExtensions`
+  exactly; photo source filters by kind and documents its producible
+  extensions (`heic` included). `PickedFile` population parity (real byte
+  size, name-derived mime, app-accessible path) and the cancellation
+  contract pinned by tests for both invoice shapes.
+
 ## 1.0.1
 
 - `zuraffa` constraint raised to `^7.0.0` and `zorphy_annotation` to `^2.4.3`,

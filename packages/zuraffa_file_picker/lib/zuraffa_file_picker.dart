@@ -21,11 +21,14 @@
 library;
 
 export 'src/domain/entities/enums/file_type.dart';
+export 'src/domain/entities/enums/picker_host.dart';
+export 'src/domain/entities/enums/picker_source.dart';
 export 'src/domain/entities/file_pick_options/file_pick_options.dart';
 export 'src/domain/entities/file_pick_result/file_pick_result.dart';
 export 'src/domain/entities/file_save_options/file_save_options.dart';
 export 'src/domain/entities/picked_file/picked_file.dart';
 export 'src/domain/file_picker_port.dart';
+export 'src/domain/picker_source_router.dart';
 export 'src/domain/usecases/pick_files_usecase.dart';
 export 'src/data/file_picker/in_memory_file_picker_adapter.dart';
 export 'src/file_picker_service.dart';

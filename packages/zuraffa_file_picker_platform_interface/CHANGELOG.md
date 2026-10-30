@@ -1,3 +1,11 @@
+## Unreleased
+
+- The wire gains the `source` request key (spec 002): the resolved picker
+  source (`document` / `photoLibrary`) travels to the native
+  implementations; `MethodChannelFilePickerAdapter` resolves it through
+  `PickerSourceRouter` and accepts an explicit `host` (the iOS package
+  pins `PickerHost.ios`). Tests in `test/media_source_routing_test.dart`.
+
 ## 7.3.0 - 2026-10-28
 
 - Mono-version fleet alignment: the whole zuraffa family ships at 7.3.0 together with the core.
