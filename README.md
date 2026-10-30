@@ -42,7 +42,7 @@ registerFilePickerDependencies(getIt);
 final picker = getIt<FilePickerService>();
 
 final picked = await picker.pickFiles(FilePickOptions(type: FileType.image));
-final saved = await picker.saveFile(const FileSaveOptions(name: 'out.png'));
+final saved = await picker.saveFile(const FileSaveOptions(fileName: 'out.png'));
 final directory = await picker.pickDirectory();
 ```
 

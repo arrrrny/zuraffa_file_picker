@@ -111,28 +111,28 @@ void main() {
   });
 
   test('no pubspec points outside the repo (CI would not resolve)', () {
-    for (final member in _members) {
-      final text = _read(_memberPubspec(member), '$member pubspec');
-      expect(
-        text.contains('path: ../../../zuraffa'),
-        isFalse,
-        reason:
-            '$member overrides zuraffa with a sibling checkout that '
-            'does not exist on CI or a fresh clone',
-      );
-    }
-    final example = _read(
+    final pubspecs = [
+      for (final member in _members)
+        File('${_repoRoot.path}/packages/$member/pubspec.yaml'),
       File(
         '${_repoRoot.path}/packages/zuraffa_file_picker/example/pubspec.yaml',
       ),
-      'example pubspec',
-    );
-    expect(
-      example.contains('path: ../../../../zuraffa'),
-      isFalse,
-      reason:
-          'example overrides zuraffa with a sibling checkout that '
-          'does not exist on CI or a fresh clone',
-    );
+    ];
+    for (final pubspec in pubspecs) {
+      final text = _read(pubspec, '${pubspec.parent.path.split('/').last} pubspec');
+      for (final match in RegExp(r'''path:\s*["']?([^"'\s]+)''').allMatches(
+        text,
+      )) {
+        final resolved =
+            Uri.file('${pubspec.parent.path}/').resolve(match.group(1)!);
+        expect(
+          resolved.toFilePath().startsWith('${_repoRoot.path}/'),
+          isTrue,
+          reason:
+              '${pubspec.path} points outside the repo: '
+              '${match.group(1)} resolves to ${resolved.toFilePath()}',
+        );
+      }
+    }
   });
 }
