@@ -26,8 +26,8 @@ startup:
 
 ```yaml
 dependencies:
-  zuraffa_file_picker: ^7.3.0
-  zuraffa_file_picker_ios: ^7.3.0
+  zuraffa_file_picker: ^7.3.2
+  zuraffa_file_picker_ios: ^7.3.2
 ```
 
 Requires iOS 14+ (UniformTypeIdentifiers, PHPicker). No permission

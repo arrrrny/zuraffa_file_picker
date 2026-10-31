@@ -28,12 +28,12 @@ platform adapters. Built on the
 
 ```yaml
 dependencies:
-  zuraffa_file_picker: ^7.3.0
+  zuraffa_file_picker: ^7.3.2
   # Register the federated adapter for each platform you ship (these give
   # the real OS picker; omit them and the in-memory simulator answers).
-  zuraffa_file_picker_android: ^7.3.0
-  zuraffa_file_picker_ios: ^7.3.0
-  zuraffa_file_picker_macos: ^7.3.0
+  zuraffa_file_picker_android: ^7.3.2
+  zuraffa_file_picker_ios: ^7.3.2
+  zuraffa_file_picker_macos: ^7.3.2
 ```
 
 ```dart
