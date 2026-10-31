@@ -3,7 +3,7 @@ description: >-
   The Android implementation of zuraffa_file_picker (Storage Access
   Framework): pick files, save documents and pick directories via the
   system document picker.
-version: 7.3.0
+version: 7.3.2
 homepage: https://zuraffa.com
 
 environment:
@@ -22,8 +22,8 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  zuraffa_file_picker: ^7.3.0
-  zuraffa_file_picker_platform_interface: ^7.3.0
+  zuraffa_file_picker: ^7.3.2
+  zuraffa_file_picker_platform_interface: ^7.3.2
 
 dependency_overrides:
   zuraffa_file_picker:
@@ -32,8 +32,10 @@ dependency_overrides:
     path: ../zuraffa_file_picker_platform_interface
 
   xml: 7.1.0
+  zuraffa:
+    path: ../../../zuraffa
 dev_dependencies:
-  zuraffa: ^7.3.0
+  zuraffa: ^7.3.2
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0

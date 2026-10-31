@@ -3,7 +3,7 @@ description: >-
   The zuraffa_file_picker demonstrator: pick files, save documents and
   pick directories through the real OS pickers or the in-memory simulator.
 publish_to: 'none'
-version: 7.3.0
+version: 7.3.2
 
 environment:
   sdk: ^3.13.3
@@ -13,14 +13,14 @@ dependencies:
     sdk: flutter
 
   get_it: ^9.2.1
-  zuraffa: ^7.3.0
+  zuraffa: ^7.3.2
 
   # The federated plugin under test (app-facing + platform siblings).
-  zuraffa_file_picker: ^7.3.0
-  zuraffa_file_picker_platform_interface: ^7.3.0
-  zuraffa_file_picker_android: ^7.3.0
-  zuraffa_file_picker_ios: ^7.3.0
-  zuraffa_file_picker_macos: ^7.3.0
+  zuraffa_file_picker: ^7.3.2
+  zuraffa_file_picker_platform_interface: ^7.3.2
+  zuraffa_file_picker_android: ^7.3.2
+  zuraffa_file_picker_ios: ^7.3.2
+  zuraffa_file_picker_macos: ^7.3.2
 
 # Resolve the federated siblings to this checkout (the Flutter federated
 # plugin example pattern) while the published artifacts use hosted deps.
@@ -37,6 +37,8 @@ dependency_overrides:
     path: ../../zuraffa_file_picker_macos
 
   xml: 7.1.0
+  zuraffa:
+    path: ../../../../zuraffa
 dev_dependencies:
   flutter_test:
     sdk: flutter

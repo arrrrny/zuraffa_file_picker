@@ -1,3 +1,7 @@
+## 7.3.2 - 2026-10-31
+
+Mono-version fleet alignment to 7.3.2: outbound send port lands in zuraffa_intents (shareText/shareFiles behind ShareIntentService); the whole family ships at one version.
+
 ## Unreleased
 
 - Fleet hardening (zik_zak spec 1205): new CI workflow (`.github/workflows/test.yml`) runs analyze + test + publish dry-run for every federated member on every push/PR — one job per member so a failure names it. Single ubuntu lane: nothing in the fleet's Dart code is platform-conditional.

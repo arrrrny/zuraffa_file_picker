@@ -3,7 +3,7 @@ description: >-
   Typed file picking for the Zuraffa ecosystem: a pure-Dart
   FilePickerPort (pick, save, pick directory) with an in-memory default
   adapter and federated platform adapters.
-version: 7.3.0
+version: 7.3.2
 homepage: https://zuraffa.com
 
 environment:
@@ -12,7 +12,7 @@ environment:
 dependencies:
   json_annotation: ^4.12.0
   zorphy_annotation: ^2.4.3
-  zuraffa: ^7.3.0
+  zuraffa: ^7.3.2
 
 dev_dependencies:
   build_runner: ^2.16.0
@@ -34,3 +34,6 @@ topics:
 # still transitively pull the abandoned minio (xml 6.x) resolve cleanly.
 dependency_overrides:
   xml: 7.1.0
+
+  zuraffa:
+    path: ../../../zuraffa
