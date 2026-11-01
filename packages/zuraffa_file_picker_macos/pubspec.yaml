@@ -25,11 +25,6 @@ dependencies:
   zuraffa_file_picker_platform_interface: ^7.3.2
 
 dependency_overrides:
-  zuraffa_file_picker:
-    path: ../zuraffa_file_picker
-  zuraffa_file_picker_platform_interface:
-    path: ../zuraffa_file_picker_platform_interface
-
   xml: 7.1.0
 dev_dependencies:
   zuraffa: ^7.3.2

@@ -17,9 +17,11 @@ dependencies:
   zuraffa_file_picker: ^7.3.2
 
 dependency_overrides:
-  zuraffa_file_picker:
-    path: ../zuraffa_file_picker
-
+  # Fleet-wide xml policy: pin the override to the latest xml so graphs
+  # that still transitively pull the abandoned minio (xml 6.x) resolve
+  # cleanly. No sibling path stanzas — they poison the published archive
+  # (pub does NOT strip overrides); local dev resolution rides a
+  # gitignored pubspec_overrides.yaml.
   xml: 7.1.0
 dev_dependencies:
   flutter_lints: ^6.0.0
