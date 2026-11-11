@@ -26,14 +26,7 @@ dependencies:
   zuraffa_file_picker_platform_interface: ^7.4.1
 
 dependency_overrides:
-  # Fleet-wide xml policy: pin the override to the latest xml so graphs
-  # that still transitively pull the abandoned minio (xml 6.x) resolve
-  # cleanly. No sibling path stanzas — they poison the published archive
-  # (pub does NOT strip overrides); local dev resolution rides a
-  # gitignored pubspec_overrides.yaml.
   xml: 7.1.0
-  zuraffa:
-    path: ../../../zuraffa
 dev_dependencies:
   zuraffa: ^7.4.1
   flutter_test:

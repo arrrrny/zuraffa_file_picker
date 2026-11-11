@@ -25,20 +25,7 @@ dependencies:
 # Resolve the federated siblings to this checkout (the Flutter federated
 # plugin example pattern) while the published artifacts use hosted deps.
 dependency_overrides:
-  zuraffa_file_picker:
-    path: ../
-  zuraffa_file_picker_platform_interface:
-    path: ../../zuraffa_file_picker_platform_interface
-  zuraffa_file_picker_android:
-    path: ../../zuraffa_file_picker_android
-  zuraffa_file_picker_ios:
-    path: ../../zuraffa_file_picker_ios
-  zuraffa_file_picker_macos:
-    path: ../../zuraffa_file_picker_macos
-
   xml: 7.1.0
-  zuraffa:
-    path: ../../../../zuraffa
 dev_dependencies:
   flutter_test:
     sdk: flutter
