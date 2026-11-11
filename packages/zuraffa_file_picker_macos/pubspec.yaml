@@ -3,7 +3,7 @@ description: >-
   The macOS implementation of zuraffa_file_picker (NSOpenPanel /
   NSSavePanel): pick files, save documents and pick directories via the
   native open and save panels.
-version: 7.3.6
+version: 7.4.1
 homepage: https://zuraffa.com
 
 environment:
@@ -21,15 +21,15 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  zuraffa_file_picker: ^7.3.6
-  zuraffa_file_picker_platform_interface: ^7.3.6
+  zuraffa_file_picker: ^7.4.1
+  zuraffa_file_picker_platform_interface: ^7.4.1
 
 dependency_overrides:
   xml: 7.1.0
   zuraffa:
     path: ../../../zuraffa
 dev_dependencies:
-  zuraffa: ^7.3.6
+  zuraffa: ^7.4.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
