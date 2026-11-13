@@ -64,6 +64,58 @@ the `Merge PR` row is terminal. Everything else is the pool's job: it drives
 the review, the fixes round and the merge.
 <!-- pool-pr:end -->
 
+<!-- dependency-rule:begin -->
+## Waiting is a status: `locked`. Declare dependencies, never busy-wait
+
+Some work cannot start until other work lands. The pool models that wait as a
+**status**, not as a retry loop: a task whose declared dependencies have not
+departed their last stops sits in **`locked`**. It is born locked when the hold
+already exists at mint, and the pool's 30s dependency sweep locks it otherwise,
+storing the hold reason (`dependency lock: …`) on the row.
+
+The lock is structural: the claim CAS wins **`queued`** rows only, so **no agent
+decision, no force-start marker and no settings row can put a locked row on a
+lane**. Only two things move it:
+
+- the sweep's release (`locked -> queued`), one cycle after the dependency
+  departs its last stop;
+- the operator's `POST /tasks/<id>/dependencies` — an **empty list clears the
+  set and releases at once**.
+
+So never try to "just start" a locked task, and never cancel one because it
+looks stuck: waiting is the pool's decision, and the row is doing exactly what
+it was told.
+
+**Declare the dependency at issue time.** An issue body line
+
+```
+Depends on: owner/repo#123
+```
+
+(or `./ingest.sh --depends-on "owner/repo#123, owner/other#9"`, or
+`dependencies` on `POST /tasks`) makes the minted task **born locked** — no
+window where an agent can claim work whose prerequisite is not in yet. If you
+file an issue that unblocks another, say so in the blocker's body and in the
+dependent's `Depends on:` line.
+
+## Fix it once, at the package level
+
+**We own this ecosystem.** A defect in a shared package is fixed **in the
+package**, once — not patched around in each consumer. If `zuraffa_*` needs a
+capability, the capability lands in the framework package; if a bug reproduces
+in a base package, the fix belongs there and the dependents simply consume the
+release.
+
+This is not a preference, it is the rule:
+
+- a fix that only lands in one app is an incomplete fix — port it down to the
+  package that owns the behaviour;
+- when a change spans repos, declare the dependency (`Depends on:`) so the
+  consumer's task is `locked` until the package's PR merges — the dependency
+  rule is exactly the orchestration for "solve it once, at the layer that owns
+  it".
+<!-- dependency-rule:end -->
+
 <!-- tmp-clone:begin -->
 ## Work in a `/tmp` clone — never in `~/Developer`
 
@@ -81,6 +133,70 @@ the primary checkout. The pool's lanes already mint their clones this way
 (`/tmp/fix-pr-<n>`, `/tmp/review-pr-<n>`, `/tmp/issue-<n>`, …) and remove them
 when the task settles.
 <!-- tmp-clone:end -->
+
+<!-- local-ci:begin -->
+## Running CI locally — `scripts/local_ci.sh`
+
+GitHub Actions is billing-blocked on our private repos: every workflow run ends in
+~3s with **zero steps executed**, so a red check here means nothing. Run the same
+gate locally instead:
+
+```bash
+./scripts/local_ci.sh              # every job of the pull_request workflow
+./scripts/local_ci.sh --plan       # print every step that would run, run nothing
+./scripts/local_ci.sh --list       # workflows, triggers and jobs in this repo
+./scripts/local_ci.sh --job <id>   # one job only
+./scripts/local_ci.sh --event push # simulate the push-triggered workflow
+./scripts/local_ci.sh --keep-going # do not stop at the first failure
+./scripts/local_ci.sh -v           # echo each command before running it
+```
+
+It reads `.github/workflows/*` at run time and executes that workflow's jobs and
+steps in order, so it cannot drift from CI — it is not a second copy of the gate.
+Edit the workflow and the local run changes with it. Exit 0 means every executed
+step passed.
+
+What it cannot reproduce, and prints on startup instead of guessing:
+
+- **Linux.** CI runs `ubuntu-latest`; this runs on macOS. The step set is the
+  same, the platform is not. `sudo apt-get install` steps are mapped to a local
+  presence probe rather than silently passed.
+- **GitHub context.** A step needing `${{ secrets.* }}`, `${{ inputs.* }}`,
+  `${{ vars.* }}`, `${{ steps.* }}` or `${{ github.event.* }}` is SKIPPED with the
+  reason printed, never run with a guessed value. Secrets are the one context
+  an operator can supply FOR REAL (#708): `LOCAL_CI_SECRET_<NAME>=… ./scripts/local_ci.sh`
+  resolves `${{ secrets.<NAME> }}` to that value, and `LOCAL_CI_SECRETS="<NAME>,…"`
+  reads each name from the ambient environment (a name it cannot back is named
+  at startup and stays blanked). The report says which secrets were real and
+  which were blanked; names are printed, values are never echoed — a value a
+  step prints is masked to `***` in the echoed and captured output, as GitHub
+  masks it in a run log.
+- **`uses:` actions** are not executed. Toolchain setups (`setup-dart`,
+  `setup-node`, `flutter-action`, `rust-toolchain`, …) become a version assertion
+  against the local tool; checkout/cache/artifact are noted as no-ops; anything
+  else is skipped by name. A Windows-runner job is skipped outright.
+- **Cargo cross targets.** A step that builds for a rust cross target (e.g.
+  `cargo build --target wasm32-wasip2`) is answered against this host's
+  toolchain: a rustup toolchain carrying EVERY target the step asks for is used
+  for that step — selected through the rustup proxy (`RUSTUP_TOOLCHAIN`), so
+  `cargo +<toolchain>` keeps working — and when no local toolchain carries them
+  the step is SKIPPED with the reason printed (`rustup target add <target>`) —
+  never a red step that says nothing about the repo. The toolchain the workflow
+  pins wins over another one that merely happens to carry the target. A host
+  with no rust toolchain at all is a MISSING TOOLCHAIN, not a missing target:
+  the step FAILS, as this script's convention says.
+- **`container:`** jobs run on the host toolchain, not in the declared image.
+- **`continue-on-error: true`** steps are advisory locally, exactly as in CI.
+- **Local-only checkout state.** CI checks out the committed tree; this checkout
+  also has gitignored and untracked paths, which whole-tree commands (e.g.
+  `dart analyze .`) see. A step that fails naming only such paths is reported as
+  a LOCAL-ONLY failure, not as a CI failure — pass `--strict` to count it anyway.
+  A step that would `git clone` over a sibling checkout that already exists here
+  is skipped; `--allow-outside-clone` forces it.
+
+Canonical copy: `arrrrny/forklift` → `scripts/local_ci.sh` (reference:
+`docs/forklift-scripts.md`).
+<!-- local-ci:end -->
 
 <!-- test-concurrency:begin -->
 ## Test concurrency (fleet guard)
