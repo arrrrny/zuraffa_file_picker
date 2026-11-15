@@ -27,8 +27,6 @@ dependencies:
 
 dependency_overrides:
   xml: 7.1.0
-  zuraffa:
-    path: ../../../zuraffa
 dev_dependencies:
   zuraffa: ^7.5.0
   flutter_test:
