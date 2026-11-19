@@ -555,65 +555,65 @@ packages:
     dependency: transitive
     description:
       name: zorphy
-      sha256: "29a3e10383b40286cedd8a4a82342f032c19d0993fa0e3518911d823e04b86fe"
+      sha256: a2b400798c6c33881ad326fffc353eea56418d9a7fb314906ba881c7ddd14ebd
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.6"
+    version: "2.5.1"
   zorphy_annotation:
     dependency: transitive
     description:
       name: zorphy_annotation
-      sha256: "402d08a0f9a02de6a832bc6ac714b9f85c5b4e10a889e6d159644cd8faa11b35"
+      sha256: "8b1879ce2b74332b8f909d369b955f5081d4ca9e2a96dc1ec3fc66721bfb36ba"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.6"
+    version: "2.5.1"
   zuraffa:
     dependency: "direct main"
     description:
       path: "../../../../zuraffa"
       relative: true
     source: path
-    version: "7.4.2"
+    version: "7.5.1"
   zuraffa_file_picker:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker
-      sha256: cafc633b012b2617dd8af4b17104434dddf87fb6234bc7ce275224620532cb7f
+      sha256: f4a4987b12033392ea626102b751e38c84957898b67386c0bd4fedb65adbe188
       url: "https://pub.dev"
     source: hosted
-    version: "7.4.2"
+    version: "7.5.0"
   zuraffa_file_picker_android:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker_android
-      sha256: cd3217712754475c0a2fcc8169e074061e23f0c99b5210c0d401bba29a1095a1
+      sha256: "64d3286cee8ebffab3d206acb286cd4b0469fc47367d068f2e09f585dba3f655"
       url: "https://pub.dev"
     source: hosted
-    version: "7.4.2"
+    version: "7.5.0"
   zuraffa_file_picker_ios:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker_ios
-      sha256: "6a72a2ab7fb2be633750223cfc2300ae9461bdab336ce33e9a060115ada5c05d"
+      sha256: "0b715c1403e6fac348cd617811383eadf66cd3c419d232c4fbe9f978f88d29a8"
       url: "https://pub.dev"
     source: hosted
-    version: "7.4.2"
+    version: "7.5.0"
   zuraffa_file_picker_macos:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker_macos
-      sha256: bcc4dd1c9eea00650d472bc0fdfa889a48843cef0356e33bf8bdc483c837a598
+      sha256: fc812599963ad5fd1d5d64516a66fb71ef9e03f80be9b15c75fcfb16e0b83434
       url: "https://pub.dev"
     source: hosted
-    version: "7.4.2"
+    version: "7.5.0"
   zuraffa_file_picker_platform_interface:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker_platform_interface
-      sha256: c2263dc36989186567bf2afdc538bb1cc4c783f0be6904ceba502d651639c7e6
+      sha256: "24786563229b1dbfe79296d2466e441ad525d8f342679c7ea2c5a21b070b728f"
       url: "https://pub.dev"
     source: hosted
-    version: "7.4.2"
+    version: "7.5.0"
 sdks:
   dart: ">=3.13.3 <4.0.0"
   flutter: ">=3.41.0"
