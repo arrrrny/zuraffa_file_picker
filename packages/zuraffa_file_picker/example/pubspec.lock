@@ -570,50 +570,51 @@ packages:
   zuraffa:
     dependency: "direct main"
     description:
-      path: "../../../../zuraffa"
-      relative: true
-    source: path
-    version: "7.5.1"
+      name: zuraffa
+      sha256: ef610afd23f6a4c86ce1ad904db869265b9f8050bec145f907c8b6c8a6d488f6
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.6.0"
   zuraffa_file_picker:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker
-      sha256: f4a4987b12033392ea626102b751e38c84957898b67386c0bd4fedb65adbe188
+      sha256: c3a0eb6e2e8ac34d902076bd694b9fcb32670d563b65db1f9ece344d42769100
       url: "https://pub.dev"
     source: hosted
-    version: "7.5.0"
+    version: "7.6.0"
   zuraffa_file_picker_android:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker_android
-      sha256: "64d3286cee8ebffab3d206acb286cd4b0469fc47367d068f2e09f585dba3f655"
+      sha256: "98db5ec1ee4e2028e9cb047ab73243e7e2caea291b2cb7fe404fd31919e9201e"
       url: "https://pub.dev"
     source: hosted
-    version: "7.5.0"
+    version: "7.6.0"
   zuraffa_file_picker_ios:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker_ios
-      sha256: "0b715c1403e6fac348cd617811383eadf66cd3c419d232c4fbe9f978f88d29a8"
+      sha256: d37c4222ad0cffcca09a664ca0bebed31454ea9f7745b4372e72344ea23686c3
       url: "https://pub.dev"
     source: hosted
-    version: "7.5.0"
+    version: "7.6.0"
   zuraffa_file_picker_macos:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker_macos
-      sha256: fc812599963ad5fd1d5d64516a66fb71ef9e03f80be9b15c75fcfb16e0b83434
+      sha256: cc3bc2fc91d610f5c58bcefeb735c7804daacbbc6136d298d9309f2c0e30f0bf
       url: "https://pub.dev"
     source: hosted
-    version: "7.5.0"
+    version: "7.6.0"
   zuraffa_file_picker_platform_interface:
     dependency: "direct main"
     description:
       name: zuraffa_file_picker_platform_interface
-      sha256: "24786563229b1dbfe79296d2466e441ad525d8f342679c7ea2c5a21b070b728f"
+      sha256: c57bb9b173dcc01875114bdd5f989c945fc5f8398e234d0dcfc66c6ada0189d7
       url: "https://pub.dev"
     source: hosted
-    version: "7.5.0"
+    version: "7.6.0"
 sdks:
   dart: ">=3.13.3 <4.0.0"
   flutter: ">=3.41.0"
